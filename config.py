@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Telegram settings
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "")
 ALLOWED_USER_ID = int(os.getenv("ALLOWED_USER_ID", "0"))
 
 # OpenAI API Key
@@ -17,3 +17,10 @@ OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 
 # Maximum token context for ChatGPT
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1024"))
+
+# Stop polling Telegram flag
+STOP_POLLING_TELEGRAM = os.getenv("STOP_POLLING_TELEGRAM", "false").lower() in (
+    "true",
+    "1",
+    "yes",
+)
