@@ -7,7 +7,7 @@ load_dotenv()
 
 # Telegram settings
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-ALLOWED_USER_ID = os.getenv("ALLOWED_USER_ID", "0")
+ALLOWED_USER_ID = int(os.getenv("ALLOWED_USER_ID", "0"))
 
 # OpenAI API Key
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
