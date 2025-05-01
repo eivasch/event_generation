@@ -19,6 +19,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Suppress httpx logs
+httpx_logger = logging.getLogger("httpx")
+httpx_logger.disabled = True
+
 class TelegramBot:
     def __init__(self):
         logger.info("Initializing TelegramBot...")
