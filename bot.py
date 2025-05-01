@@ -1,4 +1,5 @@
 import logging
+
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -8,7 +9,7 @@ from telegram.ext import (
     filters,
 )
 
-from config import TELEGRAM_TOKEN
+from config import ALLOWED_USER_ID, TELEGRAM_TOKEN
 from openai_client import ChatGPTClient
 
 # Configure logging
@@ -39,11 +40,21 @@ class TelegramBot:
 
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Send a welcome message when the command /start is issued."""
+        if update.effective_user.id != ALLOWED_USER_ID:
+            logger.warning("Unauthorized access attempt by user ID: %s", update.effective_user.id)
+            await update.message.reply_text("You are not authorized to use this bot.")
+            return
+
         logger.info("Received /start command from user: %s", update.effective_user.username)
         await update.message.reply_text('Welcome to the ChatGPT Telegram Bot! Send me a message and I will respond using ChatGPT.')
 
     async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Send a help message when the command /help is issued."""
+        if update.effective_user.id != ALLOWED_USER_ID:
+            logger.warning("Unauthorized access attempt by user ID: %s", update.effective_user.id)
+            await update.message.reply_text("You are not authorized to use this bot.")
+            return
+
         logger.info("Received /help command from user: %s", update.effective_user.username)
         help_text = """
         How to use this bot:
@@ -56,6 +67,11 @@ class TelegramBot:
 
     async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle incoming messages and respond with ChatGPT."""
+        if update.effective_user.id != ALLOWED_USER_ID:
+            logger.warning("Unauthorized access attempt by user ID: %s", update.effective_user.id)
+            await update.message.reply_text("You are not authorized to use this bot.")
+            return
+
         user_message = update.message.text
         logger.info("Received message from user %s: %s", update.effective_user.username, user_message)
 
