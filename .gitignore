@@ -176,3 +176,6 @@ cython_debug/
 # VsCode
 *.workspace
 *.code-workspace
+
+# Script files to local testing
+local_script.py

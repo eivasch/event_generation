@@ -14,8 +14,7 @@ from openai_client import ChatGPTClient
 
 # Configure logging
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
@@ -23,8 +22,9 @@ logger = logging.getLogger(__name__)
 httpx_logger = logging.getLogger("httpx")
 httpx_logger.disabled = True
 
+
 class TelegramBot:
-    def __init__(self):
+    def __init__(self) -> None:
         logger.info("Initializing TelegramBot...")
         self.chatgpt_client = ChatGPTClient()
         self.application = Application.builder().token(TELEGRAM_TOKEN).build()
@@ -32,7 +32,7 @@ class TelegramBot:
         # Register handlers
         self.register_handlers()
 
-    def register_handlers(self):
+    def register_handlers(self) -> None:
         """Register command and message handlers."""
         logger.info("Registering command and message handlers...")
         # Command handlers
@@ -40,26 +40,62 @@ class TelegramBot:
         self.application.add_handler(CommandHandler("help", self.help_command))
 
         # Message handler
-        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
+        self.application.add_handler(
+            MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message)
+        )
 
-    async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def start_command(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ) -> None:
         """Send a welcome message when the command /start is issued."""
+        if update.effective_user is None:
+            logger.warning("Received message from unknown user")
+            return
+
+        if update.message is None:
+            logger.warning(
+                "Received None message from user: %s", update.effective_user.username
+            )
+            return
+
         if update.effective_user.id != ALLOWED_USER_ID:
-            logger.warning("Unauthorized access attempt by user ID: %s", update.effective_user.id)
+            logger.warning(
+                "Unauthorized access attempt by user ID: %s", update.effective_user.id
+            )
             await update.message.reply_text("You are not authorized to use this bot.")
             return
 
-        logger.info("Received /start command from user: %s", update.effective_user.username)
-        await update.message.reply_text('Welcome to the ChatGPT Telegram Bot! Send me a message and I will respond using ChatGPT.')
+        logger.info(
+            "Received /start command from user: %s", update.effective_user.username
+        )
+        await update.message.reply_text(
+            "Welcome to the ChatGPT Telegram Bot! Send me a message and I will respond using ChatGPT."
+        )
 
-    async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def help_command(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ) -> None:
         """Send a help message when the command /help is issued."""
+        if update.effective_user is None:
+            logger.warning("Received message from unknown user")
+            return
+
+        if update.message is None:
+            logger.warning(
+                "Received None message from user: %s", update.effective_user.username
+            )
+            return
+
         if update.effective_user.id != ALLOWED_USER_ID:
-            logger.warning("Unauthorized access attempt by user ID: %s", update.effective_user.id)
+            logger.warning(
+                "Unauthorized access attempt by user ID: %s", update.effective_user.id
+            )
             await update.message.reply_text("You are not authorized to use this bot.")
             return
 
-        logger.info("Received /help command from user: %s", update.effective_user.username)
+        logger.info(
+            "Received /help command from user: %s", update.effective_user.username
+        )
         help_text = """
         How to use this bot:
         
@@ -69,15 +105,37 @@ class TelegramBot:
         """
         await update.message.reply_text(help_text)
 
-    async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def handle_message(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ) -> None:
         """Handle incoming messages and respond with ChatGPT."""
+        if update.effective_user is None:
+            logger.warning("Received message from unknown user")
+            return
+
+        if update.message is None:
+            logger.warning(
+                "Received None message from user: %s", update.effective_user.username
+            )
+            return
+        
         if update.effective_user.id != ALLOWED_USER_ID:
-            logger.warning("Unauthorized access attempt by user ID: %s", update.effective_user.id)
+            logger.warning(
+                "Unauthorized access attempt by user ID: %s", update.effective_user.id
+            )
             await update.message.reply_text("You are not authorized to use this bot.")
             return
 
         user_message = update.message.text
-        logger.info("Received message from user %s: %s", update.effective_user.username, user_message)
+        if user_message is None:
+            logger.warning("Received None message from user")
+            return
+
+        logger.info(
+            "Received message from user %s: %s",
+            update.effective_user.username,
+            user_message,
+        )
 
         # Inform user that the bot is processing
         await update.message.reply_text("Processing your request...")
@@ -85,16 +143,26 @@ class TelegramBot:
         # Get response from ChatGPT
         try:
             logger.info("Sending message to ChatGPT: %s", user_message)
-            response = await self.chatgpt_client.get_response(user_message)
+            response = await self.chatgpt_client.get_response(
+                message=user_message,
+                instructions="Сейчас я буду присылать сообщения, "
+                "а ты из них будешь делать ссылки на гугл календарь, "
+                "чтобы я могла автоматически создать там событие. Таймзона по умолчанию -- Москва. "
+                "Ссылки писать текстом, а не гиперссылками",
+            )
             logger.info("Received response from ChatGPT: %s", response)
         except Exception as e:
             logger.error("Error while processing message: %s", e)
             response = "Sorry, I couldn't process your request."
 
+        if response is None:
+            logger.error("Received None response from ChatGPT")
+            response = "Sorry, I couldn't process your request."
+
         # Send response back to user
         await update.message.reply_text(response)
 
-    def run(self):
+    def run(self) -> None:
         """Run the bot until the user presses Ctrl-C"""
         logger.info("Starting bot...")
         self.application.run_polling()
