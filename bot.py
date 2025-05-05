@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from telegram import Update
 from telegram.ext import (
@@ -118,7 +119,7 @@ class TelegramBot:
                 "Received None message from user: %s", update.effective_user.username
             )
             return
-        
+
         if update.effective_user.id != ALLOWED_USER_ID:
             logger.warning(
                 "Unauthorized access attempt by user ID: %s", update.effective_user.id
@@ -148,7 +149,8 @@ class TelegramBot:
                 instructions="Сейчас я буду присылать сообщения, "
                 "а ты из них будешь делать ссылки на гугл календарь, "
                 "чтобы я могла автоматически создать там событие. Таймзона по умолчанию -- Москва. "
-                "Ссылки писать текстом, а не гиперссылками",
+                "Ссылки писать текстом, а не гиперссылками. Сейчас "
+                + datetime.now().strftime("%d.%m.%Y %H:%M"),
             )
             logger.info("Received response from ChatGPT: %s", response)
         except Exception as e:
