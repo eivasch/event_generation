@@ -13,7 +13,7 @@ ALLOWED_USER_ID = int(os.getenv("ALLOWED_USER_ID", "0"))
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Default model for ChatGPT
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.4-mini")
 
 # Maximum token context for ChatGPT
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1024"))
