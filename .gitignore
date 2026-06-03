@@ -180,3 +180,7 @@ cython_debug/
 
 # Script files to local testing
 local_script.py
+
+# Model evaluation artifacts
+eval_cases/
+eval_reports/

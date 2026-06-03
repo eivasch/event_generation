@@ -36,7 +36,7 @@ Telegram Event Generation is a Python-based Telegram bot that integrates with Op
    ```env
    TELEGRAM_TOKEN=your-telegram-bot-token
    OPENAI_API_KEY=your-openai-api-key
-   OPENAI_MODEL=gpt-4o  # Optional, default is gpt-4o
+   OPENAI_MODEL=gpt-5.4-mini  # Optional, default is gpt-5.4-mini
    MAX_TOKENS=1024      # Optional, default is 1024
    ```
 
@@ -49,12 +49,37 @@ Telegram Event Generation is a Python-based Telegram bot that integrates with Op
 
 2. Interact with the bot on Telegram by sending messages. The bot will respond using ChatGPT.
 
+## Model Evaluation
+
+Run a live comparison of prompt variants for Russian message-to-calendar-link quality:
+
+```bash
+poetry run python scripts/evaluate_models.py
+```
+
+Optional settings:
+
+```bash
+poetry run python scripts/evaluate_models.py \
+  --models gpt-5.4-mini \
+  --prompts tests/fixtures/prompts_ru.json \
+  --prompt-ids baseline,combined_best_guess \
+  --runs 3 \
+  --cases tests/fixtures/calendar_ru.json \
+  --output-dir eval_reports
+```
+
+The workflow writes raw JSONL results and a Markdown summary with overall, low-cost, and quality winners by model/prompt pair. It requires `OPENAI_API_KEY` and does not change the production `OPENAI_MODEL` or bot prompt. Private evaluation sets can be stored under ignored `eval_cases/` and passed with `--cases`.
+
 ## Project Structure
 
 - `main.py`: Entry point for starting the bot.
 - `bot.py`: Contains the Telegram bot implementation and message handlers.
 - `openai_client.py`: Handles communication with OpenAI's ChatGPT API.
 - `config.py`: Loads and manages environment variables.
+- `scripts/evaluate_models.py`: Compares model quality, latency, and estimated cost.
+- `tests/fixtures/calendar_ru.json`: Russian calendar-link evaluation fixtures.
+- `tests/fixtures/prompts_ru.json`: Russian prompt variants for live evaluation.
 - `pyproject.toml`: Project configuration and dependencies.
 
 ## License

@@ -1,0 +1,80 @@
+[
+  {
+    "id": "explicit_tomorrow",
+    "description": "Explicit relative day and time",
+    "input": "завтра в 15:00 встреча с Машей",
+    "expected_title_terms": ["встреча", "Машей"],
+    "expected_start": "2026-06-03T15:00:00+03:00",
+    "expected_end": "2026-06-03T16:00:00+03:00",
+    "expected_timezone": "Europe/Moscow"
+  },
+  {
+    "id": "weekday_relative",
+    "description": "Relative weekday and time",
+    "input": "в пятницу в 19:30 ужин",
+    "expected_title_terms": ["ужин"],
+    "expected_start": "2026-06-05T19:30:00+03:00",
+    "expected_end": "2026-06-05T20:30:00+03:00",
+    "expected_timezone": "Europe/Moscow"
+  },
+  {
+    "id": "date_range",
+    "description": "Explicit date with start and end time",
+    "input": "12 июня с 10 до 12 созвон",
+    "expected_title_terms": ["созвон"],
+    "expected_start": "2026-06-12T10:00:00+03:00",
+    "expected_end": "2026-06-12T12:00:00+03:00",
+    "expected_timezone": "Europe/Moscow"
+  },
+  {
+    "id": "missing_year",
+    "description": "Date without year should use upcoming date",
+    "input": "5 июля в 9 утра стоматолог",
+    "expected_title_terms": ["стоматолог"],
+    "expected_start": "2026-07-05T09:00:00+03:00",
+    "expected_end": "2026-07-05T10:00:00+03:00",
+    "expected_timezone": "Europe/Moscow"
+  },
+  {
+    "id": "relative_hours",
+    "description": "Ambiguous reminder-like event with relative time",
+    "input": "через два часа напомни купить билеты",
+    "expected_title_terms": ["купить", "билеты"],
+    "expected_start": "2026-06-02T14:00:00+03:00",
+    "expected_end": "2026-06-02T15:00:00+03:00",
+    "expected_timezone": "Europe/Moscow"
+  },
+  {
+    "id": "timezone_default",
+    "description": "No timezone in input should default to Moscow",
+    "input": "сегодня в 18:00 тренировка",
+    "expected_title_terms": ["тренировка"],
+    "expected_start": "2026-06-02T18:00:00+03:00",
+    "expected_end": "2026-06-02T19:00:00+03:00",
+    "expected_timezone": "Europe/Moscow"
+  },
+  {
+    "id": "weekday_abbrev_thursday_spaced_time",
+    "description": "Short weekday abbreviation and spaced time",
+    "input": "чт 20 00 йога",
+    "expected_title_terms": ["йога"],
+    "expected_start": "2026-06-04T20:00:00+03:00",
+    "expected_end": "2026-06-04T21:00:00+03:00",
+    "expected_timezone": "Europe/Moscow"
+  },
+  {
+    "id": "weekday_abbrev_friday_spaced_time",
+    "description": "Short weekday abbreviation with spaced minutes",
+    "input": "пт 9 30 завтрак с Леной",
+    "expected_title_terms": ["завтрак", "Леной"],
+    "expected_start": "2026-06-05T09:30:00+03:00",
+    "expected_end": "2026-06-05T10:30:00+03:00",
+    "expected_timezone": "Europe/Moscow"
+  },
+  {
+    "id": "non_event_noise",
+    "description": "Non-event message should not produce a bogus calendar link",
+    "input": "как дела? просто проверяю связь",
+    "expected_no_link": true
+  }
+]
