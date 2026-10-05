@@ -1,11 +1,13 @@
 # Telegram Event Generation
 
-Telegram Event Generation is a Python-based Telegram bot that integrates with OpenAI's ChatGPT to provide conversational AI capabilities. Users can send messages to the bot, and it will respond using ChatGPT.
+Telegram Event Generation is a Python-based Telegram bot that integrates with OpenAI's ChatGPT to provide conversational AI capabilities. Users can send event details as text or images, and the bot responds with a Google Calendar link.
 
 ## Features
 
 - Telegram bot integration using `python-telegram-bot`.
-- ChatGPT integration via OpenAI API.
+- Event extraction from Telegram photos and JPEG, PNG, or WebP image documents.
+- Optional image captions for extra event details.
+- ChatGPT integration via the OpenAI Responses API; the configured model must support image input.
 - Asynchronous message handling for efficient communication.
 
 ## Requirements
@@ -35,6 +37,7 @@ Telegram Event Generation is a Python-based Telegram bot that integrates with Op
 4. Create a `.env` file in the project root and add the following environment variables:
    ```env
    TELEGRAM_TOKEN=your-telegram-bot-token
+   ALLOWED_USER_ID=your-telegram-user-id
    OPENAI_API_KEY=your-openai-api-key
    OPENAI_MODEL=gpt-5.4-mini  # Optional, default is gpt-5.4-mini
    MAX_TOKENS=1024      # Optional, default is 1024
@@ -47,7 +50,9 @@ Telegram Event Generation is a Python-based Telegram bot that integrates with Op
    poetry run python main.py
    ```
 
-2. Interact with the bot on Telegram by sending messages. The bot will respond using ChatGPT.
+2. Send event details as text, a photo, or an image file (JPEG, PNG, or WebP, up to 20 MiB). Add a caption to clarify details such as the date, time, or location. The bot reads the image and caption together and responds with a Google Calendar link. If essential details are unreadable, it asks for clarification.
+
+Images are downloaded in memory and sent to OpenAI for analysis. Each image is processed separately, including images sent in an album. Only `ALLOWED_USER_ID` can use the bot.
 
 ## Model Evaluation
 
